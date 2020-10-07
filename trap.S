@@ -1,4 +1,3 @@
-.section .text
-.global asm_trap_vector
-asm_trap_vector:
-	mret
+.option norvc
+m_trap_vector:
+	csrrw t6, mscratch, t6
