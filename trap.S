@@ -19,41 +19,37 @@ m_trap_vector:
 	# bottom register (x31)
 
 	
-	sd x1, 0(sp)   
-	sd x2, 8(sp)   
-	sd x3, 16(sp)   
-	sd x4, 24(sp)   
-	sd x5, 32(sp)   
-	sd x6, 40(sp)   
-	sd x7, 48(sp)   
-	sd x8, 56(sp)   
-	sd x9, 64(sp)   
-	sd x10, 72(sp)   
-	sd x11, 80(sp)   
-	sd x12, 88(sp)   
-	sd x13, 96(sp)   
-	sd x14, 104(sp)   
-	sd x15, 112(sp)   
-	sd x16, 120(sp)   
-	sd x17, 128(sp)   
-	sd x18, 136(sp)   
-	sd x19, 144(sp)   
-	sd x20, 152(sp)   
-	sd x21, 160(sp)   
-	sd x22, 168(sp)   
-	sd x23, 176(sp)   
-	sd x24, 184(sp)   
-	sd x25, 192(sp)   
-	sd x26, 200(sp)   
-	sd x27, 208(sp)   
-	sd x28, 216(sp)   
-	sd x29, 232(sp)   
-	sd x30, 240(sp)   
-	sd x31, 248(sp)   
-
+	# TODO - Precisa salvar tudo isso? Ver guia pratico pagina 111 (136 do pdf)
+	sd x5 , 0(sp)   
+	sd x6 , 8(sp)   
+	sd x7 , 16(sp)   
+	sd x8 , 24(sp)   
+	sd x9 , 32(sp)   
+	sd x10 , 40(sp)   
+	sd x11 , 48(sp)   
+	sd x12 , 56(sp)   
+	sd x13 , 64(sp)   
+	sd x14, 72(sp)   
+	sd x15, 80(sp)   
+	sd x16, 88(sp)   
+	sd x17, 96(sp)   
+	sd x18, 104(sp)   
+	sd x19, 112(sp)   
+	sd x20, 120(sp)   
+	sd x21, 128(sp)   
+	sd x22, 136(sp)   
+	sd x23, 144(sp)   
+	sd x24, 152(sp)   
+	sd x25, 160(sp)   
+	sd x26, 168(sp)   
+	sd x27, 176(sp)   
+	sd x28, 184(sp)   
+	sd x29, 192(sp)   
+	sd x30, 200(sp)   
+	sd x31, 208(sp)   
 
 	csrr	t5, mscratch
-	sd t5, 256(sp)
+	sd t5, 216(sp)
 
 	# Save the actual t6 register, which we swapped into
 	# mscratch
@@ -70,12 +66,10 @@ m_trap_vector:
 	call	m_trap
 
 	#voltamos da trap, desempilhamos o contexto
-
-	ld x1, 248(sp)   
-	ld x2, 240(sp)   
-	ld x3, 232(sp)   
-	ld x4, 216(sp)   
-	ld x5, 208(sp)   
+	
+	# TODO - Nao deveria ser o mesmo offset usado para empilhar?
+	# i.e. ld x5, 0(sp) ; ld x6, 8(sp) ; ...
+	ld x5 , 208(sp)   
 	ld x6, 200(sp)   
 	ld x7, 192(sp)   
 	ld x8, 184(sp)   
@@ -103,7 +97,7 @@ m_trap_vector:
 	ld x30, 8(sp)   
 	ld x31, 0(sp)   
 
-	ld t6, 256(sp)
+	ld t6, 216(sp)
 
 	# m_trap will return the return address via a0.
 
