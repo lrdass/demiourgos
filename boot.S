@@ -35,7 +35,7 @@ _start:
 	csrw	mstatus, t0 # load in mstatus (machine status register) (o atual estado da thread) os op
 	la		t1, kmain
 	csrw	mepc, t1 # carrega no registrador de pc_exception endereco da kmain
-	la		t2, asm_trap_vector 
+	la		t2, m_trap_vector 
 	csrw	mtvec, t2 #carrega em no reg trap_handler o endereco do trap_handler
 	li		t3, (1 << 3) | (1 << 7) | (1 << 11)
 	csrw	mie, t3 #carrega no registrador machine interrupt enable o padrao 

@@ -14,7 +14,7 @@ extern "C" int kmain(){
 	volatile uint64* mtimecmp= reinterpret_cast<uint64*>(0x02004000);
 	volatile uint64* mtime =  reinterpret_cast<uint64*>(0x0200bff8);
 
-	*mtime += 10000000;	
+	*mtimecmp += 10000000;	
 	
 	return 0;
 
