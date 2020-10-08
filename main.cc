@@ -11,7 +11,11 @@ struct trap_frame{
 extern "C" int kmain(){
 
 	// disparar interrupcao de timer	
+	volatile uint64* mtimecmp= reinterpret_cast<uint64*>(0x02004000);
+	volatile uint64* mtime =  reinterpret_cast<uint64*>(0x0200bff8);
 
+	*mtime += 10000000;	
+	
 	return 0;
 
 }
@@ -23,7 +27,7 @@ extern "C" void m_trap(uint64 epc, uint64 tval,uint64 cause,uint64 hart, uint64 
 {
 	// o bit mais significante da causa diz se é uma interrupcao sincrona ou assincrona
 	bool async = false;
-	if (cause >> 63 & 1 == 1){
+	if ((cause >> 63 & 1) == 1){
 		async = true;
 	} else {
 		async = false;
