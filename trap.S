@@ -19,37 +19,27 @@ m_trap_vector:
 	# bottom register (x31)
 
 	
-	# TODO - Precisa salvar tudo isso? Ver guia pratico pagina 111 (136 do pdf)
-	sd x5 , 0(sp)   
-	sd x6 , 8(sp)   
-	sd x7 , 16(sp)   
-	sd x8 , 24(sp)   
-	sd x9 , 32(sp)   
-	sd x10 , 40(sp)   
-	sd x11 , 48(sp)   
-	sd x12 , 56(sp)   
-	sd x13 , 64(sp)   
-	sd x14, 72(sp)   
-	sd x15, 80(sp)   
-	sd x16, 88(sp)   
-	sd x17, 96(sp)   
-	sd x18, 104(sp)   
-	sd x19, 112(sp)   
-	sd x20, 120(sp)   
-	sd x21, 128(sp)   
-	sd x22, 136(sp)   
-	sd x23, 144(sp)   
-	sd x24, 152(sp)   
-	sd x25, 160(sp)   
-	sd x26, 168(sp)   
-	sd x27, 176(sp)   
-	sd x28, 184(sp)   
-	sd x29, 192(sp)   
-	sd x30, 200(sp)   
-	sd x31, 208(sp)   
+	# Save registers (https://github.com/michaeljclark/riscv-probe/blob/master/env/common/crtm.s)
+	addi sp, sp, -136
+	sd ra, 0(sp)
+	sd a0, 8(sp)
+	sd a1, 16(sp)
+	sd a2, 24(sp)
+	sd a3, 32(sp)
+	sd a4, 40(sp)
+	sd a5, 48(sp)
+	sd a6, 56(sp)
+	sd a7, 64(sp)
+	sd t0, 72(sp)
+	sd t1, 80(sp)
+	sd t2, 88(sp)
+	sd t3, 96(sp)
+	sd t4, 104(sp)
+	sd t5, 112(sp)
+	sd t6, 120(sp)
 
 	csrr	t5, mscratch
-	sd t5, 216(sp)
+	sd t5, 128(sp)
 
 	# Save the actual t6 register, which we swapped into
 	# mscratch
@@ -65,40 +55,27 @@ m_trap_vector:
 	csrr	a5, mscratch
 	call	m_trap
 
-	#voltamos da trap, desempilhamos o contexto
-	
-	# TODO - Nao deveria ser o mesmo offset usado para empilhar?
-	# i.e. ld x5, 0(sp) ; ld x6, 8(sp) ; ...
-	ld x5 , 208(sp)   
-	ld x6, 200(sp)   
-	ld x7, 192(sp)   
-	ld x8, 184(sp)   
-	ld x9, 176(sp)   
-	ld x10, 168(sp)   
-	ld x11, 160(sp)   
-	ld x12, 152(sp)   
-	ld x13, 144(sp)   
-	ld x14, 136(sp)   
-	ld x15, 128(sp)   
-	ld x16, 120(sp)   
-	ld x17, 112(sp)   
-	ld x18, 104(sp)   
-	ld x19, 96(sp)   
-	ld x20, 88(sp)   
-	ld x21, 80(sp)   
-	ld x22, 72(sp)   
-	ld x23, 64(sp)   
-	ld x24, 56(sp)   
-	ld x25, 48(sp)   
-	ld x26, 40(sp)   
-	ld x27, 32(sp)   
-	ld x28, 24(sp)   
-	ld x29, 16(sp)   
-	ld x30, 8(sp)   
-	ld x31, 0(sp)   
+	# Restore registers
+	ld ra, 0(sp)
+	ld a0, 8(sp)
+	ld a1, 16(sp)
+	ld a2, 24(sp)
+	ld a3, 32(sp)
+	ld a4, 40(sp)
+	ld a5, 48(sp)
+	ld a6, 56(sp)
+	ld a7, 64(sp)
+	ld t0, 72(sp)
+	ld t1, 80(sp)
+	ld t2, 88(sp)
+	ld t3, 96(sp)
+	ld t4, 104(sp)
+	ld t5, 112(sp)
+	ld t6, 120(sp)
 
-	ld t6, 216(sp)
+	ld t6, 128(sp)
 
+	addi sp, sp, 136
 	# m_trap will return the return address via a0.
 
 	csrw	mepc, a0
