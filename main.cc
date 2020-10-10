@@ -1,5 +1,3 @@
-#include "uart.cc"
-
 typedef unsigned long long uint64;
 
 struct trap_frame{
