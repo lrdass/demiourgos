@@ -6,109 +6,57 @@
 # of this vector.
 .align 4
 m_trap_vector:
-	# All registers are volatile here, we need to save them
-	# before we do anything.
-	# csrrw	t6, mscratch, t6
-	# csrrw will atomically swap t6 into mscratch and the old
-	# value of mscratch into t6. This is nice because we just
-	# switched values and didn't destroy anything -- all atomically!
-	# in cpu.rs we have a structure of:
-	#  32 gp regs		0
-	#  32 fp regs		256
-	# We use t6 as the temporary register because it is the very
-	# bottom register (x31)
+	# Save registers
+	addi sp, sp, -128    # Make some space in the stack
+	sd ra, 0(sp)         # Return address
+	sd a0, 8(sp)         # Function argument / return value
+	sd a1, 16(sp)        # Function argument / return value
+	sd a2, 24(sp)        # Function argument
+	sd a3, 32(sp)        # Function argument
+	sd a4, 40(sp)        # Function argument
+	sd a5, 48(sp)        # Function argument
+	sd a6, 56(sp)        # Function argument
+	sd a7, 64(sp)        # Function argument
+	sd t0, 72(sp)        # Temporary / alternate return address
+	sd t1, 80(sp)        # Temporary
+	sd t2, 88(sp)        # Temporary
+	sd t3, 96(sp)        # Temporary
+	sd t4, 104(sp)       # Temporary
+	sd t5, 112(sp)       # Temporary
+	sd t6, 120(sp)       # Temporary
 
-	
-	sd x1, 0(sp)   
-	sd x2, 8(sp)   
-	sd x3, 16(sp)   
-	sd x4, 24(sp)   
-	sd x5, 32(sp)   
-	sd x6, 40(sp)   
-	sd x7, 48(sp)   
-	sd x8, 56(sp)   
-	sd x9, 64(sp)   
-	sd x10, 72(sp)   
-	sd x11, 80(sp)   
-	sd x12, 88(sp)   
-	sd x13, 96(sp)   
-	sd x14, 104(sp)   
-	sd x15, 112(sp)   
-	sd x16, 120(sp)   
-	sd x17, 128(sp)   
-	sd x18, 136(sp)   
-	sd x19, 144(sp)   
-	sd x20, 152(sp)   
-	sd x21, 160(sp)   
-	sd x22, 168(sp)   
-	sd x23, 176(sp)   
-	sd x24, 184(sp)   
-	sd x25, 192(sp)   
-	sd x26, 200(sp)   
-	sd x27, 208(sp)   
-	sd x28, 216(sp)   
-	sd x29, 232(sp)   
-	sd x30, 240(sp)   
-	sd x31, 248(sp)   
-
-
-	csrr	t5, mscratch
-	sd t5, 256(sp)
-
-	# Save the actual t6 register, which we swapped into
-	# mscratch
-
-	# messed with us here.
-	# csrw	mie, zero
-
-	csrr	a0, mepc
-	csrr	a1, mtval
-	csrr	a2, mcause
-	csrr	a3, mhartid
-	csrr	a4, mstatus
-	csrr	a5, mscratch
+	# Set arguments and call m_trap
+	csrr	a0, mepc     # Machine exception pc
+	csrr	a1, mtval    # Machine bad address or instruction
+	csrr	a2, mcause   # Machine trap cause
+	csrr	a3, mhartid  # Machine hart id
+	csrr	a4, mstatus  # Machine status
+	csrr	a5, mscratch # Scratch resgister for machine trap handlers
 	call	m_trap
 
-	#voltamos da trap, desempilhamos o contexto
+	# Restore registers
+	ld ra, 0(sp)         # Return address
+	ld a0, 8(sp)         # Function argument / return value
+	ld a1, 16(sp)        # Function argument / return value
+	ld a2, 24(sp)        # Function argument
+	ld a3, 32(sp)        # Function argument
+	ld a4, 40(sp)        # Function argument
+	ld a5, 48(sp)        # Function argument
+	ld a6, 56(sp)        # Function argument
+	ld a7, 64(sp)        # Function argument
+	ld t0, 72(sp)        # Temporary / alternate return address
+	ld t1, 80(sp)        # Temporary
+	ld t2, 88(sp)        # Temporary
+	ld t3, 96(sp)        # Temporary
+	ld t4, 104(sp)       # Temporary
+	ld t5, 112(sp)       # Temporary
+	ld t6, 120(sp)       # Temporary
 
-	ld x1, 248(sp)   
-	ld x2, 240(sp)   
-	ld x3, 232(sp)   
-	ld x4, 216(sp)   
-	ld x5, 208(sp)   
-	ld x6, 200(sp)   
-	ld x7, 192(sp)   
-	ld x8, 184(sp)   
-	ld x9, 176(sp)   
-	ld x10, 168(sp)   
-	ld x11, 160(sp)   
-	ld x12, 152(sp)   
-	ld x13, 144(sp)   
-	ld x14, 136(sp)   
-	ld x15, 128(sp)   
-	ld x16, 120(sp)   
-	ld x17, 112(sp)   
-	ld x18, 104(sp)   
-	ld x19, 96(sp)   
-	ld x20, 88(sp)   
-	ld x21, 80(sp)   
-	ld x22, 72(sp)   
-	ld x23, 64(sp)   
-	ld x24, 56(sp)   
-	ld x25, 48(sp)   
-	ld x26, 40(sp)   
-	ld x27, 32(sp)   
-	ld x28, 24(sp)   
-	ld x29, 16(sp)   
-	ld x30, 8(sp)   
-	ld x31, 0(sp)   
-
-	ld t6, 256(sp)
-
+	addi sp, sp, 128
 	# m_trap will return the return address via a0.
 
-	csrw	mepc, a0
+	# csrw	mepc, a0
 	# Now load the trap frame back into t6
-	csrr	t6, mscratch
+	# csrr	t6, mscratch
 	mret
 
