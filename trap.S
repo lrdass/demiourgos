@@ -1,9 +1,6 @@
 
 .section .text
 .global m_trap_vector
-# This must be aligned by 4 since the last two bits
-# of the mtvec register do not contribute to the address
-# of this vector.
 .align 4
 m_trap_vector:
 	# Save registers
@@ -59,4 +56,3 @@ m_trap_vector:
 	# Now load the trap frame back into t6
 	# csrr	t6, mscratch
 	mret
-
