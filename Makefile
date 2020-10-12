@@ -8,4 +8,4 @@ debug:
 	-ex "target remote:1234" -ex "set confirm off" \
 	-ex "add-symbol-file ./a.out 0x80000000"
 run:
-	qemu-system-riscv64 -machine virt -m 128M -kernel a.out
+	qemu-system-riscv64 -machine virt -m 128M -kernel a.out -bios none
