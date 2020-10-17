@@ -1,4 +1,5 @@
-
+#ifndef UART_H
+#define UART_H
 typedef unsigned long long uint64;
 
 class UART {
@@ -59,3 +60,4 @@ public:
 
 };
 
+#endif

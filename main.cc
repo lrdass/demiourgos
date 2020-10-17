@@ -2,6 +2,7 @@ typedef unsigned long long uint64;
 typedef char uint8;
 
 #include "uart.h"
+#include "mem.h"
 
 
 struct trap_frame{
@@ -44,25 +45,14 @@ char mmio_read(unsigned long address, int offset)
 	volatile char* reg = (char*) address;
 	return *(reg+offset);
 }
-extern "C" {
-	static unsigned int TEXT_START;
-	static unsigned int TEXT_END;
-	static unsigned int DATA_START;
-	static unsigned int DATA_END;
-	static unsigned int RODATA_START;
-	static unsigned int RODATA_END;
-	static unsigned int BSS_START;
-	static unsigned int BSS_END;
-	static unsigned int KERNEL_STACK_START;
-	static unsigned int KERNEL_STACK_END;
-	static unsigned int HEAP_START;
-	static unsigned int HEAP_SIZE;
-	static unsigned int KERNEL_TABLE;
-}
+extern unsigned int _text_start, _heap_start, _heap_size;
 
 extern "C" int kmain(){
 	UART uart(0x10000000);
 	uart.write("fasdf ad f");
+	
+	Memory::init();
+	Memory::alloc(3);
 	// disparar interrupcao de timer	
 	
 	return 0;
