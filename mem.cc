@@ -2,18 +2,17 @@
 
 using namespace Memory;
 
-extern unsigned int _text_start, _heap_start, _heap_size;
-
-void Memory::init(){
+void Memory::init()
+{
     
-    int num_pages = *(&_heap_size)/PAGE_SIZE;
-    Page* page = (Page*)&_heap_start;
+    int num_pages = HEAP_SIZE/PAGE_SIZE;
+    Page* page = (Page*)HEAP_START;
 
     for (int i = 0; i<num_pages; i++) {
         (page+i)->clear();
     }
 
-    ALLOC_START = *(&_heap_start) + num_pages * sizeof(Page);
+    ALLOC_START = HEAP_START + num_pages * sizeof(Page);
 
 }
 
@@ -31,8 +30,8 @@ void Page::clear(){
 
 char* Memory::alloc(unsigned int pages)
 {
-    int num_pages = _heap_size/PAGE_SIZE;
-    Page* page = reinterpret_cast<Page*>(_heap_start);
+    int num_pages = HEAP_SIZE/PAGE_SIZE;
+    Page* page = reinterpret_cast<Page*>(HEAP_START);
 
     for (int i = 0; i < num_pages-pages; i++){
         bool found = false;

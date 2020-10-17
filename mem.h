@@ -2,11 +2,24 @@
 #define MEM_H
 #include "uart.h"
 
-#define PAGE_SIZE 4096
+static unsigned int ALLOC_START;
+static unsigned short PAGE_SIZE = 4096;
+
+extern "C" unsigned int HEAP_SIZE ;
+extern "C" unsigned int  TEXT_END;
+extern "C" unsigned int DATA_START;
+extern "C" unsigned int DATA_END;
+extern "C" unsigned int RODATA_START;
+extern "C" unsigned int RODATA_END;
+extern "C" unsigned int BSS_START;
+extern "C" unsigned int BSS_END;
+extern "C" unsigned int KERNEL_STACK_START;
+extern "C" unsigned int KERNEL_STACK_END;
+extern "C" unsigned int HEAP_START;
+extern "C" unsigned int HEAP_SIZE;
 
 namespace Memory{
 
-static unsigned int ALLOC_START;
 
 enum PageInfo {
     EMPTY = 0,
