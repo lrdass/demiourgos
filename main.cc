@@ -1,10 +1,14 @@
 typedef unsigned long long uint64;
+typedef char uint8;
+
+#include "uart.h"
+
 
 struct trap_frame{
 	uint64 regs[32]; 		// 0 - 255 bytes
-	uint64 fregs[32]; 	// 256 - 511 bytes
-	uint64 satp; 				// 512 - 519 bytes	
-	uint64* trap_stack; // 520 byte 
+	uint64 fregs[32]; 		// 256 - 511 bytes
+	uint64 satp; 			// 512 - 519 bytes	
+	uint64* trap_stack;		// 520 byte 
 	uint64 hartid;			// 528 byte
 };
 
@@ -29,12 +33,39 @@ void add_timer(int seconds) {
 	*mtimecmp = *mtime + (seconds * 10000000);
 }
 
+void mmio_write(unsigned long address, int offset, char value)
+{
+	volatile char* reg = (char*) address;
+	*(reg+offset) = value;
+}
+
+char mmio_read(unsigned long address, int offset)
+{
+	volatile char* reg = (char*) address;
+	return *(reg+offset);
+}
+extern "C" {
+	static unsigned int TEXT_START;
+	static unsigned int TEXT_END;
+	static unsigned int DATA_START;
+	static unsigned int DATA_END;
+	static unsigned int RODATA_START;
+	static unsigned int RODATA_END;
+	static unsigned int BSS_START;
+	static unsigned int BSS_END;
+	static unsigned int KERNEL_STACK_START;
+	static unsigned int KERNEL_STACK_END;
+	static unsigned int HEAP_START;
+	static unsigned int HEAP_SIZE;
+	static unsigned int KERNEL_TABLE;
+}
+
 extern "C" int kmain(){
+	UART uart(0x10000000);
+	uart.write("fasdf ad f");
 	// disparar interrupcao de timer	
-	add_timer(1);
 	
 	return 0;
-
 }
 
 extern "C" void m_trap(uint64 epc, uint64 tval,uint64 cause,uint64 hart, uint64 status, trap_frame* trap_frame)

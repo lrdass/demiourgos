@@ -1,8 +1,8 @@
 
 .section .text
-.global m_trap_vector
+.global asm_trap_vector
 .align 4
-m_trap_vector:
+asm_trap_vector:
 	# Save registers
 	addi sp, sp, -128    # Make some space in the stack
 	sd ra, 0(sp)         # Return address
