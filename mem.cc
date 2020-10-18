@@ -61,3 +61,27 @@ char* Memory::alloc(unsigned int pages)
     }
     return nullptr;
 }
+
+void map(Table& root, unsigned int virt_addr, unsigned int phy_addr, uint64 bits, unsigned int level) 
+{
+    unsigned short vpn[] = {
+        // VPN[0] = vaddr[20:12]
+        (virt_addr >> 12) & 0x1ff,
+        // VPN[1] = vaddr[29:21]
+        (virt_addr >> 21) & 0x1ff,
+        // VPN[2] = vaddr[38:30]
+        (virt_addr >> 30) & 0x1ff,
+    };
+    
+    unsigned short ppn[] = {
+        // PPN[0] = paddr[20:12]
+        (phy_addr >> 12) & 0x1ff,
+        // PPN[1] = paddr[29:21]
+        (phy_addr >> 21) & 0x1ff,
+        // PPN[2] = paddr[55:30]
+        (phy_addr >> 30) & 0x3ffffff,
+    };
+
+
+
+}

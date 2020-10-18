@@ -4,6 +4,12 @@ typedef char uint8;
 #include "uart.h"
 #include "mem.h"
 
+const bool DISABLE_AFTER_FIRST_INTERRUPT = false;
+
+static void print(char* string) {
+	UART uart(0x10000000);
+	uart.write(string);
+}
 
 struct trap_frame{
 	uint64 regs[32]; 		// 0 - 255 bytes
@@ -13,7 +19,6 @@ struct trap_frame{
 	uint64 hartid;			// 528 byte
 };
 
-const bool DISABLE_AFTER_FIRST_INTERRUPT = false;
 
 void disable_interrupts() {
 	asm("addi sp, sp, -8");
@@ -34,26 +39,11 @@ void add_timer(int seconds) {
 	*mtimecmp = *mtime + (seconds * 10000000);
 }
 
-void mmio_write(unsigned long address, int offset, char value)
+extern "C" int kmain()
 {
-	volatile char* reg = (char*) address;
-	*(reg+offset) = value;
-}
 
-char mmio_read(unsigned long address, int offset)
-{
-	volatile char* reg = (char*) address;
-	return *(reg+offset);
-}
-extern unsigned int _text_start, _heap_start, _heap_size;
-
-extern "C" int kmain(){
-	UART uart(0x10000000);
-	uart.write("fasdf ad f");
-	
-	Memory::init();
-	Memory::alloc(3);
-	// disparar interrupcao de timer	
+	// Memory::init();
+	// Memory::alloc(3);	
 	
 	return 0;
 }
