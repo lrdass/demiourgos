@@ -1,9 +1,14 @@
 #ifndef MEM_H
 #define MEM_H
 #include "uart.h"
-typedef unsigned long long uint64;
+typedef unsigned long long uint64_t;
 
-static unsigned int ALLOC_START;
+// saber onde está o proximo endereco para alocar
+static unsigned int ALLOC_START = 0;
+// para alinhar as paginas, tem que ser alinhado a 2^12
+// ou seja, 3 paginas = 3 ^12 e será multiplo de 4096 
+static const unsigned short PAGE_ORDER = 12;
+// cada pagina é do tamanho da leitura da MMU 
 static unsigned short PAGE_SIZE = 4096;
 
 extern "C" unsigned int HEAP_SIZE ;
@@ -16,7 +21,7 @@ extern "C" unsigned int BSS_START;
 extern "C" unsigned int BSS_END;
 extern "C" unsigned int KERNEL_STACK_START;
 extern "C" unsigned int KERNEL_STACK_END;
-extern "C" unsigned int HEAP_START;
+extern "C" uint64_t HEAP_START;
 extern "C" unsigned int HEAP_SIZE;
 
 namespace Memory{
@@ -28,14 +33,14 @@ enum EntryStatus {
 
 class Entry{
 public:
-	uint64 entry;
+	uint64_t entry;
 
-	bool is_valid(){return this->get_entry() & EntryStatus::VALID !=0;}
+	bool is_valid(){return (this->get_entry() & EntryStatus::VALID )!=0;}
 	bool is_invalid(){return !this->is_valid();}
-	bool is_leaf(){return this->get_entry() & 0xe != 0; }
+	bool is_leaf(){return (this->get_entry() & 0xe) != 0; }
 	bool is_branch(){return !this->is_leaf();}
-	void set_entry(uint64 entry){this->entry = entry;}
-	uint64 get_entry(){return this->entry;}
+	void set_entry(uint64_t entry){this->entry = entry;}
+	uint64_t get_entry(){return this->entry;}
 };
 
 struct Table{
@@ -69,9 +74,13 @@ char* alloc (unsigned int pages);
 void dealloc (unsigned int pages);
 char* zalloc (unsigned int pages);
 
-void map(Table& root, unsigned int virt_addr, unsigned int phy_addr, uint64 bits, unsigned int level );
+uint64_t align_val(unsigned int value, unsigned int order); 
+
+void map(Table& root, uint64_t virt_addr, uint64_t phy_addr, uint64_t bits, unsigned int level );
 void unmap(Table& root);
-uint64 virt_to_phys(Table& root, unsigned int virt_addr);
+uint64_t virt_to_phys(Table& root, unsigned int virt_addr);
+
+
 
 }
 

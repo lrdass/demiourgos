@@ -42,8 +42,8 @@ void add_timer(int seconds) {
 extern "C" int kmain()
 {
 
-	// Memory::init();
-	// Memory::alloc(3);	
+	Memory::init();
+	Memory::alloc(3);	
 	
 	return 0;
 }
