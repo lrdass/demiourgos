@@ -50,6 +50,7 @@ m_trap_vector:
 	ld t6, 120(sp)       # Temporary
 
 	addi sp, sp, 128
+	// disable interrupts
 	# m_trap will return the return address via a0.
 
 	# csrw	mepc, a0
