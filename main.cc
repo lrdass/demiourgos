@@ -1,14 +1,24 @@
 typedef unsigned long long uint64;
+typedef char uint8;
+
+#include "uart.h"
+#include "mem.h"
+
+const bool DISABLE_AFTER_FIRST_INTERRUPT = false;
+
+static void print(char* string) {
+	UART uart(0x10000000);
+	uart.write(string);
+}
 
 struct trap_frame{
 	uint64 regs[32]; 		// 0 - 255 bytes
-	uint64 fregs[32]; 	// 256 - 511 bytes
-	uint64 satp; 				// 512 - 519 bytes	
-	uint64* trap_stack; // 520 byte 
+	uint64 fregs[32]; 		// 256 - 511 bytes
+	uint64 satp; 			// 512 - 519 bytes	
+	uint64* trap_stack;		// 520 byte 
 	uint64 hartid;			// 528 byte
 };
 
-const bool DISABLE_AFTER_FIRST_INTERRUPT = false;
 
 void disable_interrupts() {
 	asm("addi sp, sp, -8");
@@ -29,12 +39,13 @@ void add_timer(int seconds) {
 	*mtimecmp = *mtime + (seconds * 10000000);
 }
 
-extern "C" int kmain(){
-	// disparar interrupcao de timer	
-	add_timer(1);
+extern "C" int kmain()
+{
+
+	Memory::init();
+	Memory::alloc(3);	
 	
 	return 0;
-
 }
 
 extern "C" void m_trap(uint64 epc, uint64 tval,uint64 cause,uint64 hart, uint64 status, trap_frame* trap_frame)
